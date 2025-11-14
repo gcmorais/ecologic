@@ -56,7 +56,6 @@ const MessageBox = styled.div`
   font-size: 1.2rem;
 `;
 
-/* 🎉 POP-UP */
 const Overlay = styled.div`
   position: fixed;
   bottom: 0;
@@ -82,7 +81,18 @@ const Popup = styled(motion.div)`
   box-shadow: 0 4px 12px rgba(0,0,0,0.25);
 `;
 
-/* 🔄 SPINNER */
+const ErrorPopup = styled(motion.div)`
+  background: #ffebee;
+  padding: 24px 32px;
+  border-radius: 12px;
+  text-align: center;
+  border: 2px solid #f44336;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #b71c1c;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+`;
+
 const spin = keyframes`
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
@@ -126,7 +136,7 @@ const itemsList = [
   { id: 13, type: "papel", image: "/images/jornal.png", name: "Jornal" },
   { id: 14, type: "papel", image: "/images/caixa.webp", name: "Caixa de papelão" },
   { id: 15, type: "papel", image: "/images/folha.webp", name: "Folha de papel" },
-  { id: 16, type: "papel", image: "/images/rolo-papel.png", name: "Rolo de papel higiênico" },
+  { id: 16, type: "papel", image: "/images/rolo-papel.png", name: "Rolo de papel" },
   { id: 17, type: "papel", image: "/images/guardanapo.png", name: "Guardanapo usado" },
   { id: 18, type: "papel", image: "/images/envelope.webp", name: "Envelope" },
 
@@ -146,7 +156,10 @@ export default function App() {
   const [level, setLevel] = useState(1);
   const [lastLevel, setLastLevel] = useState(1);
   const [gameOver, setGameOver] = useState(false);
+
   const [levelMessage, setLevelMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState(""); // 🔴 NOVO
+
   const [loading, setLoading] = useState(false);
 
   const itemsPerRound = 4;
@@ -167,7 +180,6 @@ export default function App() {
 
       setCompleted((prev) => {
         const updated = [...prev, item.id];
-
         const newLevel = Math.floor(updated.length / 8) + 1;
 
         if (newLevel > lastLevel) {
@@ -182,8 +194,12 @@ export default function App() {
       });
     } else {
       setScore((s) => Math.max(0, s - 2));
+
+      setErrorMessage("❌ Item colocado no lixo errado!");
+      setTimeout(() => setErrorMessage(""), 2500);
     }
   };
+
   useEffect(() => {
     if (completed.length === itemsList.length) {
       setGameOver(true);
@@ -192,10 +208,8 @@ export default function App() {
 
     if (visibleItems.every((i) => completed.includes(i.id)) && !loading) {
       const next = getNextItems();
-
       if (next.length > 0) {
         setLoading(true);
-
         setTimeout(() => {
           setVisibleItems(next);
           setLoading(false);
@@ -211,12 +225,52 @@ export default function App() {
     setLastLevel(1);
     setGameOver(false);
     setLevelMessage("");
+    setErrorMessage("");
     setVisibleItems(getNextItems());
     setLoading(false);
   };
 
   return (
     <DndProvider backend={HTML5Backend}>
+      <div
+        className="cloud"
+        style={{
+          top: "12%",
+          width: "280px",
+          height: "140px",
+          backgroundImage: "url('/images/bg/cloud1.webp')",
+          animation: "cloud-move 45s linear infinite",
+        }}
+      />
+
+      <div className="bird" />
+        
+      <div
+        className="cloud"
+        style={{
+          top: "28%",
+          width: "350px",
+          height: "180px",
+          opacity: 0.75,
+          backgroundImage: "url('/images/bg/cloud2.webp')",
+          animation: "cloud-move 55s linear infinite",
+        }}
+      />
+
+      <div
+        className="cloud"
+        style={{
+          top: "20%",
+          width: "350px",
+          height: "180px",
+          opacity: 0.75,
+          backgroundImage: "url('/images/bg/cloud2.webp')",
+          animation: "cloud-move 30s linear infinite",
+        }}
+      />
+      
+
+      
       <Header>
         <Title initial={{ y: -10, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>
           ♻️ Ecologic — Nível {level}
@@ -227,12 +281,17 @@ export default function App() {
 
       {levelMessage && (
         <Overlay>
-          <Popup
-            initial={{ scale: 0.6, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-          >
+          <Popup initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
             {levelMessage}
           </Popup>
+        </Overlay>
+      )}
+
+      {errorMessage && (
+        <Overlay>
+          <ErrorPopup initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
+            {errorMessage}
+          </ErrorPopup>
         </Overlay>
       )}
 
@@ -243,13 +302,13 @@ export default function App() {
       )}
 
       <Container
-  gameOver={gameOver}
-  key={loading ? "loading" : "content"}
-  initial={{ opacity: 0, y: 30 }}
-  animate={{ opacity: 1, y: 0 }}
-  exit={{ opacity: 0, y: -30 }}
-  transition={{ duration: 0.6, ease: "easeOut" }}
->
+        gameOver={gameOver}
+        key={loading ? "loading" : "content"}
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -30 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+      >
         {gameOver ? (
           <MessageBox>
             <p>🏆 Você reciclou todos os itens!</p>
