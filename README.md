@@ -25,6 +25,21 @@ O jogo está disponível na Vercel:
 
 👉 **https://ecologic-beta.vercel.app**
 
+## 🎮 Como Jogar
+
+1. Arraste o item que aparece na tela para a categoria de lixo correta.
+
+    🟩 Orgânico: Alimentos e resíduos biodegradáveis.
+
+    🟥 Plástico: Embalagens, garrafas, sacolas plásticas, etc.
+
+    🟦 Papel: Jornais, revistas, caixas de papelão e outros papéis recicláveis.
+
+    🟨 Metal: Latas de alumínio, aço e outros metais recicláveis.
+
+2. Complete os desafios de reciclagem corretamente para ganhar pontos. A cada 8 itens reciclados corretamente, você sobe de nível e recebe uma mensagem de progressão.
+
+3. Quando você terminar o jogo, será exibida uma tela de conclusão com sua pontuação.
 
 ## 🛠️ Como rodar o projeto localmente
 
